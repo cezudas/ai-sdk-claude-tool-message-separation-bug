@@ -69,7 +69,7 @@ async function reproduceAISDKBug() {
   try {
     // This should fail with Claude because AI SDK will combine the messages incorrectly
     await generateObject({
-      model: anthropic('claude-3-5-sonnet-20241022'),
+      model: anthropic('claude-4-sonnet-20250514'),
       system: 'You are a helpful assistant. Respond with JSON.',
       messages: correctMessages,
       tools: {
@@ -87,8 +87,10 @@ async function reproduceAISDKBug() {
 
     console.log('SUCCESS: No error occurred (unexpected!)');
   } catch (error) {
+
     console.log('ERROR (expected):');
-    console.log('Message:', error.message);
+    console.error(JSON.stringify(error, null, 2));
+
 
     // Look for the specific Claude error about tool_use without tool_result
     if (
