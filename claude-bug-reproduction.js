@@ -103,18 +103,7 @@ async function reproduceAISDKBug() {
       console.log(
         'The error indicates Claude received malformed messages despite our correct input',
       );
-
-      // If we had access to the actual request payload, we'd see something like:
-      console.log('\nExpected AI SDK to send to Claude:');
-      console.log('Message 2: {"role": "tool", "content": [...]}');
-      console.log(
-        'Message 3: {"role": "user", "content": "generate 100 items"}',
-      );
-
-      console.log('\nActual (malformed) that AI SDK likely sent:');
-      console.log(
-        'Message 2: {"role": "user", "content": [tool_result, "generate 100 items"]}',
-      );
+    
     }
   }
 }
