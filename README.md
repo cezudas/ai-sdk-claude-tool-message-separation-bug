@@ -32,4 +32,4 @@ npm run reproduce:claude
 ```bash
 npm run reproduce:openai
 ```
-
+Read the console output to observe the test results
