@@ -12,9 +12,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@ai-sdk/anthropic": "2.0.8",
+    "@ai-sdk/anthropic": "2.0.14",
     "@ai-sdk/openai": "2.0.22",
-    "ai": "5.0.26",
+    "ai": "5.0.38",
     "dotenv": "^17.2.1"
   }
 }
