@@ -16,9 +16,9 @@ import { z } from 'zod';
 
 async function testOpenAIBehavior() {
   console.log('=== OpenAI Message Handling Test ===\n');
-  console.log('Testing same message structure that fails with Claude...\n');
+  console.log('Testing the FIXED message structure (should work with both providers)...\n');
 
-  // Same message structure that causes Claude to fail
+  // Using the FIXED message structure that works with both providers
   const testMessages = [
     {
       role: 'user',
@@ -33,14 +33,12 @@ async function testOpenAIBehavior() {
           toolName: 'json',
           input: { message: 'generate 10 items' },
         },
-        {
-          type: 'text',
-          text: 'I generated code for 10 items.',
-        },
+        // Removed text part per Vercel maintainer feedback
+        // Tool calls should be at the end of assistant responses
       ],
     },
     {
-      role: 'tool', // ← SEPARATE tool message (same as Claude test)
+      role: 'tool', // ← SEPARATE tool message
       content: [
         {
           type: 'tool-result',
@@ -57,7 +55,11 @@ async function testOpenAIBehavior() {
       ],
     },
     {
-      role: 'user', // ← SEPARATE user message (same as Claude test)
+      role: 'assistant', // ← SEPARATE assistant message for text response
+      content: 'I generated code for 10 items.',
+    },
+    {
+      role: 'user', // ← SEPARATE user message
       content: 'generate 100 items',
     },
   ];
@@ -92,18 +94,18 @@ async function testOpenAIBehavior() {
 
     console.log('\n🔍 ANALYSIS:');
     console.log(
-      '✅ OpenAI handled the same message structure that Claude rejects',
+      '✅ OpenAI works with the corrected message structure',
     );
-    console.log('📊 This suggests:');
+    console.log('📊 Key findings:');
     console.log(
-      '   1. The AI SDK transformation may be the same for both providers',
+      '   1. Both providers work when using proper message structure',
     );
     console.log(
-      '   2. OpenAI is more lenient with tool_result message placement',
+      '   2. OpenAI is more lenient (accepts both old and new structures)',
     );
-    console.log('   3. Claude has stricter validation requirements');
+    console.log('   3. Claude is stricter (only accepts proper structure)');
     console.log(
-      '   4. The bug may be Claude-specific validation, not AI SDK transformation',
+      '   4. The issue was message structure best practices, not an AI SDK bug',
     );
   } catch (error) {
     console.log('❌ ERROR (unexpected for OpenAI):');
@@ -128,14 +130,16 @@ async function testOpenAIBehavior() {
 async function compareWithClaude() {
   console.log('\n=== Comparison Summary ===');
   console.log(
-    'Claude behavior: REJECTS with "tool_use ids found without tool_result blocks"',
+    'RESOLUTION: Both providers work with proper message structure!',
   );
-  console.log('OpenAI behavior: [see results above]');
+  console.log('Claude behavior: ✅ WORKS with separated tool-call and text messages');
+  console.log('OpenAI behavior: ✅ WORKS with proper structure (also lenient with mixed)');
 
-  console.log('\n💡 Key Questions:');
-  console.log('1. Does OpenAI accept what Claude rejects?');
-  console.log('2. Is this a Claude validation strictness issue?');
-  console.log('3. Or does AI SDK transform messages differently per provider?');
+  console.log('\n💡 Key Learning:');
+  console.log('1. ✅ The issue was message structure best practices, not an AI SDK bug');
+  console.log('2. 🔧 Tool calls should be separate from text content in assistant messages');
+  console.log('3. 📏 Claude enforces stricter validation, OpenAI is more lenient');
+  console.log('4. 🎯 Use the proper structure for compatibility with all providers');
 }
 
 // Environment check

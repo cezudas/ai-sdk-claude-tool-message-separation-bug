@@ -4,6 +4,11 @@
  * Minimal reproduction of AI SDK bug where separate tool and user messages
  * get incorrectly combined into a malformed message for Claude.
  *
+ * Updated based on Vercel maintainer feedback:
+ * - Separated text content from tool-call assistant messages
+ * - Tool calls should normally be at the end of assistant responses
+ * - Text responses should be in separate assistant messages
+ *
  * Expected: AI SDK should send messages as provided
  * Actual: AI SDK combines role:"tool" + role:"user" into malformed role:"user" message
  */
@@ -16,6 +21,7 @@ async function reproduceAISDKBug() {
   console.log('=== AI SDK Bug Reproduction ===\n');
 
   // This is the correctly structured message history in AI SDK format
+  // Based on Vercel maintainer feedback: separate text from tool-call assistant messages
   const correctMessages = [
     {
       role: 'user',
@@ -30,10 +36,8 @@ async function reproduceAISDKBug() {
           toolName: 'json',
           input: { message: 'generate 10 items' },
         },
-        {
-          type: 'text',
-          text: 'I generated code for 10 items.',
-        },
+        // Removed text part per Vercel maintainer feedback
+        // Normally tool calls are at the end of assistant responses
       ],
     },
     {
@@ -52,6 +56,10 @@ async function reproduceAISDKBug() {
           },
         },
       ],
+    },
+    {
+      role: 'assistant', // ← SEPARATE assistant message for text response
+      content: 'I generated code for 10 items.',
     },
     {
       role: 'user', // ← SEPARATE user message
